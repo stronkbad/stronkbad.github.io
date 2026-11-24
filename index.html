@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>stronkbad · projects</title>
+<meta name="description" content="Games, web apps and tools built by stronkbad.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,700;12..96,800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #F3F4F7;
+    --surface: #FFFFFF;
+    --ink: #1B1F3B;
+    --ink-soft: #5A5F7D;
+    --rule: #DCDFE8;
+    --focus: #3D7DF2;
+    --font: "Bricolage Grotesque", system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font);
+    font-size: 17px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; border-radius: 4px; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 28px; }
+
+  /* ---------- Hero ---------- */
+  .hero { padding: 72px 0 0; }
+  .topbar {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 16px; flex-wrap: wrap; margin-bottom: 64px;
+  }
+  .handle { font-weight: 700; font-size: 18px; text-decoration: none; }
+  .topbar nav { display: flex; gap: 22px; }
+  .topbar nav a { text-decoration: none; color: var(--ink-soft); font-weight: 500; }
+  .topbar nav a:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 4px; }
+
+  h1 {
+    font-variation-settings: "opsz" 96;
+    font-weight: 800;
+    font-size: clamp(56px, 11vw, 148px);
+    line-height: 0.9;
+    letter-spacing: -0.045em;
+  }
+  .intro {
+    font-size: clamp(19px, 2.2vw, 23px);
+    color: var(--ink-soft);
+    max-width: 34ch;
+    margin-top: 24px;
+    line-height: 1.4;
+  }
+
+  /* ---------- Skyline: one bar per project, oldest → newest ---------- */
+  .skyline-wrap { margin-top: 56px; overflow-x: auto; padding-bottom: 4px; }
+  .skyline {
+    display: flex; align-items: flex-end; gap: 8px;
+    height: 360px; min-width: 640px;
+    border-bottom: 3px solid var(--ink);
+  }
+  .bar {
+    position: relative; flex: 1 1 0;
+    display: flex; flex-direction: column; justify-content: space-between; align-items: center;
+    padding: 12px 0 10px;
+    border-radius: 10px 10px 0 0;
+    text-decoration: none;
+    transform-origin: bottom;
+    transition: transform .18s ease, filter .18s ease;
+  }
+  .bar:hover, .bar:focus-visible { transform: translateY(-10px); filter: saturate(1.15); }
+  .bar .name {
+    writing-mode: vertical-rl; transform: rotate(180deg);
+    font-weight: 700; font-size: 15px; letter-spacing: -0.01em; white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis; max-height: calc(100% - 34px);
+  }
+  .bar .n { font-size: 13px; font-weight: 500; opacity: .8; font-variant-numeric: tabular-nums; }
+  .skyline-caption {
+    display: flex; justify-content: space-between; gap: 16px;
+    margin-top: 12px; font-size: 14px; color: var(--ink-soft);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .bar { animation: rise .7s cubic-bezier(.2,.8,.2,1) both; animation-delay: calc(var(--i) * 55ms + 150ms); }
+    @keyframes rise { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+  }
+
+  /* ---------- Project list ---------- */
+  .projects { padding: 112px 0 40px; }
+  .list-head {
+    display: flex; justify-content: space-between; align-items: end;
+    gap: 24px; flex-wrap: wrap; margin-bottom: 28px;
+  }
+  h2 { font-size: clamp(30px, 4vw, 44px); font-weight: 800; letter-spacing: -0.03em; line-height: 1; }
+  .filters { display: flex; gap: 6px; flex-wrap: wrap; }
+  .filters button {
+    font: 500 15px var(--font); color: var(--ink);
+    background: transparent; border: 1.5px solid var(--rule);
+    padding: 6px 14px; border-radius: 999px; cursor: pointer;
+  }
+  .filters button:hover { border-color: var(--ink); }
+  .filters button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+
+  .list { list-style: none; border-top: 1.5px solid var(--ink); }
+  .item {
+    display: grid;
+    grid-template-columns: 56px 1fr 120px auto;
+    gap: 24px; align-items: center;
+    padding: 26px 8px;
+    border-bottom: 1px solid var(--rule);
+    scroll-margin-top: 24px;
+  }
+  .item:target { background: color-mix(in srgb, var(--c) 14%, transparent); }
+  .item .num {
+    width: 44px; height: 44px; border-radius: 10px;
+    display: grid; place-items: center;
+    background: var(--c); color: var(--fg);
+    font-weight: 700; font-size: 16px; font-variant-numeric: tabular-nums;
+  }
+  .item h3 { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; }
+  .item p { color: var(--ink-soft); margin-top: 4px; max-width: 62ch; }
+  .item .kind { color: var(--ink-soft); font-size: 15px; }
+  .item .visit {
+    display: inline-block; text-decoration: none; font-weight: 600; font-size: 15px;
+    padding: 9px 18px; border-radius: 999px;
+    border: 1.5px solid var(--ink);
+  }
+  .item .visit:hover { background: var(--ink); color: var(--paper); }
+
+  footer {
+    padding: 56px 0 64px;
+    display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+    color: var(--ink-soft); font-size: 15px;
+  }
+  footer a { color: var(--ink); font-weight: 600; text-underline-offset: 4px; }
+
+  @media (max-width: 760px) {
+    .hero { padding-top: 40px; }
+    .topbar { margin-bottom: 40px; }
+    .skyline { height: 260px; }
+    .bar .name { font-size: 13px; }
+    .item { grid-template-columns: 44px 1fr; gap: 6px 16px; padding: 22px 4px; }
+    .item .num { width: 36px; height: 36px; font-size: 14px; grid-row: span 3; align-self: start; }
+    .item .kind, .item .visit-wrap { grid-column: 2; }
+    .item .visit-wrap { margin-top: 10px; }
+    .item h3 { font-size: 21px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="topbar">
+      <a class="handle" href="https://github.com/stronkbad">@stronkbad</a>
+      <nav aria-label="Links">
+        <a href="#projects">Projects</a>
+        <a href="https://github.com/stronkbad">GitHub</a>
+        <!-- Add more links here, e.g. <a href="mailto:you@example.com">Email</a> -->
+      </nav>
+    </div>
+
+    <h1>stronkbad</h1>
+    <p class="intro" id="intro">I build small games, web apps and tools, and put them all online.</p>
+
+    <div class="skyline-wrap">
+      <div class="skyline" id="skyline" role="list" aria-label="Projects in the order they were made"></div>
+    </div>
+    <div class="skyline-caption">
+      <span>First project</span>
+      <span>Latest</span>
+    </div>
+  </div>
+</header>
+
+<main class="projects" id="projects">
+  <div class="wrap">
+    <div class="list-head">
+      <h2>Newest first</h2>
+      <div class="filters" id="filters" aria-label="Filter projects"></div>
+    </div>
+    <ol class="list" id="list"></ol>
+  </div>
+</main>
+
+<footer class="wrap">
+  <span>© <span id="year"></span> stronkbad</span>
+  <a href="https://github.com/stronkbad">More on GitHub</a>
+</footer>
+
+<script>
+  /* ================================================================
+     YOUR PROJECTS — listed oldest to newest.
+     To add a new project, copy the last block and paste it at the end.
+       slug   – the folder name in the URL (stronkbad.github.io/<slug>/)
+       name   – display name
+       desc   – one or two sentences
+       kind   – "Game", "App", "Tool" or "Website" (used for filters)
+       color  – the project's bar colour
+       url    – optional; defaults to https://stronkbad.github.io/<slug>/
+     ================================================================ */
+  const PROJECTS = [
+    { slug: "koolcid", name: "Koolcid Roller", kind: "Game", color: "#FF6B57",
+      desc: "Guess a number from 1 to 5, hit Roll, and see if luck is on your side." },
+    { slug: "luckyllamagames", name: "Lucky Llama Games", kind: "Website", color: "#FFB627",
+      desc: "Website for a board game studio, with news on its first game, Smuggler's Cove, the rules and a newsletter signup." },
+    { slug: "bankistwebsite", name: "Bankist", kind: "Website", color: "#4CC38A",
+      desc: "Marketing site for a minimalist digital bank, with a testimonial slider, lazy-loaded images and a sign-up form." },
+    { slug: "mapty", name: "Mapty", kind: "App", color: "#2BB3C0",
+      desc: "Log your runs and bike rides on a map, with distance, duration, cadence and elevation gain." },
+    { slug: "dicegame", name: "Pig Game", kind: "Game", color: "#3D7DF2",
+      desc: "Two-player dice game. Roll to build your turn score, hold to bank it, and don't roll a one." },
+    { slug: "a-spark", name: "A Spark", kind: "Game", color: "#7A5CFA",
+      desc: "An experimental incremental game where you grow a universe, then collapse it to start a new one." },
+    { slug: "howru", name: "howru", kind: "App", color: "#F15BB5",
+      desc: "A daily mood check-in. Score your day from 1 to 10, add a few tags, and see how everyone else is feeling." },
+    { slug: "flowbase-ads", name: "Flowbase Ad System", kind: "Tool", color: "#FF8A3D",
+      desc: "Manage 30 ad variations across formats, edit the copy and colours, and export PNGs or animated MP4s." },
+    { slug: "ologi-ads", name: "ologi Ad System", kind: "Tool", color: "#8CC63F",
+      desc: "Set up a brand kit once, then design and export on-brand ads from a gallery of templates, with AI-written copy." },
+    { slug: "bg3routeledger", name: "Route Ledger", kind: "App", color: "#C0392B",
+      desc: "Plan and track your route through a Baldur's Gate 3 playthrough." },
+    { slug: "atlasdeck", name: "Atlas Deck", kind: "Game", color: "#3A506B",
+      desc: "A deck-building card game where you answer questions to play cards, review with spaced repetition and build your own decks." },
+    { slug: "recoverytracker", name: "Recovery Coach", kind: "App", color: "#8E7DBE",
+      desc: "Track your injuries and your recovery progress day by day." },
+    { slug: "woodmeasure", name: "Measure and Cut", kind: "App", color: "#B5651D",
+      desc: "Measure boards with your phone's camera, build a cut list, and get a cutting plan that wastes as little wood as possible." },
+  ];
+  /* ======================= END OF EDITABLE AREA ===================== */
+
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+  const urlOf = p => p.url || `https://stronkbad.github.io/${p.slug}/`;
+  const pad = n => String(n).padStart(2, "0");
+
+  // Pick dark or light text for each colour so labels stay readable.
+  function textOn(hex) {
+    const v = hex.replace("#", "");
+    const [r, g, b] = [0, 2, 4].map(i => parseInt(v.slice(i, i + 2), 16) / 255)
+      .map(c => c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
+    const L = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    return L > 0.28 ? "#1B1F3B" : "#FFFFFF";
+  }
+
+  const items = PROJECTS.map((p, i) => ({ ...p, n: i + 1, fg: textOn(p.color) }));
+  const words = ["zero","one","two","three","four","five","six","seven","eight","nine","ten","eleven","twelve","thirteen","fourteen","fifteen","sixteen","seventeen","eighteen","nineteen","twenty"];
+  $("intro").textContent =
+    `I build small games, web apps and tools, and put them all online. Here are all ${words[items.length] || items.length} of them, from my first to my latest.`;
+  $("year").textContent = new Date().getFullYear();
+
+  // Skyline: bars get taller over time.
+  const total = items.length;
+  $("skyline").innerHTML = items.map((p, i) => {
+    const h = 48 + (52 * i) / Math.max(total - 1, 1);
+    return `<a class="bar" role="listitem" href="#p-${esc(p.slug)}"
+               style="height:${h}%;background:${p.color};color:${p.fg};--i:${i}"
+               aria-label="${pad(p.n)}: ${esc(p.name)}">
+              <span class="name">${esc(p.name)}</span>
+              <span class="n">${pad(p.n)}</span>
+            </a>`;
+  }).join("");
+
+  // List, newest first, with filters.
+  const kinds = ["All", ...new Set(items.map(p => p.kind))];
+  let active = "All";
+
+  function renderFilters() {
+    $("filters").innerHTML = kinds.map(k => {
+      const count = k === "All" ? items.length : items.filter(p => p.kind === k).length;
+      return `<button type="button" data-k="${esc(k)}" aria-pressed="${k === active}">${esc(k)} ${count}</button>`;
+    }).join("");
+  }
+
+  function renderList() {
+    const shown = items.slice().reverse().filter(p => active === "All" || p.kind === active);
+    $("list").innerHTML = shown.map(p => `
+      <li class="item" id="p-${esc(p.slug)}" style="--c:${p.color};--fg:${p.fg}">
+        <span class="num" aria-hidden="true">${pad(p.n)}</span>
+        <div>
+          <h3>${esc(p.name)}</h3>
+          <p>${esc(p.desc)}</p>
+        </div>
+        <span class="kind">${esc(p.kind)}</span>
+        <span class="visit-wrap"><a class="visit" href="${esc(urlOf(p))}" target="_blank" rel="noopener" aria-label="Open ${esc(p.name)}">Open</a></span>
+      </li>`).join("");
+  }
+
+  $("filters").addEventListener("click", e => {
+    const b = e.target.closest("button");
+    if (!b) return;
+    active = b.dataset.k;
+    renderFilters(); renderList();
+  });
+
+  // Clicking a bar while a filter hides that project resets the filter.
+  $("skyline").addEventListener("click", e => {
+    const a = e.target.closest(".bar");
+    if (a && !document.querySelector(a.getAttribute("href"))) {
+      active = "All"; renderFilters(); renderList();
+    }
+  });
+
+  renderFilters(); renderList();
+</script>
+</body>
+</html>
